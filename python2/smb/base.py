@@ -1091,7 +1091,7 @@ c8 4f 32 4b 70 16 d3 01 12 78 5a 47 bf 6e e1 88
                 closeFid(create_message.tid, create_message.payload.fid)
             elif create_message.status == 0xC0000035:
                 # STATUS_OBJECT_NAME_COLLISION
-                errback(OperationFailure('Failed to creeate directory %s on %s: Directory already exists.' %( path, service_name ), messages_history))
+                errback(OperationFailure('Failed to create directory %s on %s: Directory already exists.' %( path, service_name ), messages_history))
             else:
                 errback(OperationFailure('Failed to create directory %s on %s: Create failed' % ( path, service_name ), messages_history))
 
