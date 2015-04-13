@@ -2,6 +2,7 @@
 import os, sys, struct, types, logging, binascii, time
 from io import StringIO
 from .smb_constants import *
+from smb_status import *
 
 
 # Set to True if you want to enable support for extended security. Required for Windows Vista and later
@@ -90,9 +91,16 @@ class SMBError:
 
     def __str__(self):
         if self.is_ntstatus:
+            ntstatus_value = '0x08X' % self.internal_value
+            ntstatus_code = NTSTATUS_CODES.get(ntstatus_value, "<unknown>")
+            ntstatus_desc = NTSTATUS_DESC.get(ntstatus_code, "<unknown>")
+            return 'NTSTATUS=%s (%s) %s ' % (ntstatus_value, ntstatus_code, ntstatus_desc) 
             return 'NTSTATUS=0x%08X' % self.internal_value
         else:
-            return 'ErrorClass=0x%02X ErrorCode=0x%04X' % ( self.internal_value >> 24, self.internal_value & 0xFFFF )
+            err_class = '0x%02X' % (self.internal_value >> 24)
+            err_code = '0x%04X' % (self.internal_value & 0xFFFF)
+            err_desc = SMB_ERR_CLASSES.get(errclass).get(err_code, '<unknown>')
+            return 'ErrorClass=0x%02X ErrorCode=0x%04X (%s)' % ( err_class, err_code, err_desc )
 
     @property
     def hasError(self):

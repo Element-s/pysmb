@@ -5,6 +5,7 @@ from smb_structs import ProtocolError
 from smb_constants import *
 from smb2_constants import *
 from utils import convertFILETIMEtoEpoch
+from smb_status import NTSTATUS_CODES, NTSTATUS_DESC
 
 
 class SMB2Message:
@@ -32,7 +33,11 @@ class SMB2Message:
     def __str__(self):
         b = StringIO()
         b.write('Command: 0x%02X (%s) %s' % ( self.command, SMB2_COMMAND_NAMES.get(self.command, '<unknown>'), os.linesep ))
-        b.write('Status: 0x%08X %s' % ( self.status, os.linesep ))
+        ntstatus_value = '0x08X' % self.status
+        ntstatus_code = NTSTATUS_CODES.get(ntstatus_value, "<unknown>")
+        ntstatus_desc = NTSTATUS_DESC.get(ntstatus_code, "<unknown>")
+        status_tmp = 'NTSTATUS=%s (%s) %s ' % (ntstatus_value, ntstatus_code, ntstatus_desc) 
+        b.write('Status: %s %s' % ( status_tmp, os.linesep ))
         b.write('Flags: 0x%02X %s' % ( self.flags, os.linesep ))
         b.write('PID: %d %s' % ( self.pid, os.linesep ))
         b.write('MID: %d %s' % ( self.mid, os.linesep ))
